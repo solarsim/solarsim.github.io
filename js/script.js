@@ -19,7 +19,7 @@ var segments = 16,
 
 var container, renderer, camera, scene;
 var cameraTarget = new THREE.Vector3();
-var renderStats, controls;
+var stats, controls;
 
 var backgroundTexture, backgroundMesh;
 var backgroundScene, backgroundCamera;
@@ -59,11 +59,14 @@ function init() {
 	controls.noPan = true;
 	controls.noZoom = true;
 
-	rendererStats   = new THREEx.RendererStats();
-	rendererStats.domElement.style.position = 'absolute';
-	rendererStats.domElement.style.left = '0px';
-	rendererStats.domElement.style.bottom   = '0px';
-	document.body.appendChild( rendererStats.domElement );
+	stats = new Stats();
+	stats.setMode( 0 ); // 0: fps, 1: ms, 2: mb
+	stats.domElement.style.position = 'absolute';
+	stats.domElement.style.left = '0px';
+	stats.domElement.style.bottom = '0px';
+
+	document.body.appendChild( stats.domElement );
+
 
 	renderer.setSize( WIDTH, HEIGHT );
 	document.body.appendChild( renderer.domElement );
@@ -273,6 +276,7 @@ document.addEventListener('DOMMouseScroll', onMouseWheel, false);
 
 //RENDER SCENE
 function render() {
+	stats.begin();
 	requestAnimationFrame( render );
 
 	spinPlanets();
@@ -305,7 +309,8 @@ function render() {
 
 	TWEEN.update();
 	controls.update();
-	rendererStats.update(renderer);
+
+	stats.end();
 
 }
 render();

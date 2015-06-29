@@ -21,13 +21,20 @@ const MERCURY_PERIHELION = 100,
 	  MARS_PERIHELION = 300,
 	  JUPITER_PERIHELION = 375;
 
+const MERCURY_TILT = 0.03,
+	  VENUS_TILT = 177.36,
+	  EARTH_TILT = 23.44,
+	  MARS_TILT = 25.19,
+	  JUPITER_TILT = 3.13;
+
 
 //PLANET OBJECT
-function Planet(name, radius, eccentricity, perihelion) {
+function Planet(name, radius, eccentricity, perihelion, tilt) {
 	this.name = name;
 	this.radius = radius;
 	this.eccentricity = eccentricity;
 	this.perihelion = perihelion;
+	this.tilt = tilt;
 
 	this.mesh = null;
 	this.angle = 0;
@@ -87,7 +94,11 @@ Planet.prototype.update = function( toMove ) {
 };
 
 Planet.prototype.spin = function() {
-	this.mesh.rotation.y += (0.05 * EARTH_RADIUS / this.radius);
+	
+	var x = Math.sin( this.tilt * Math.PI / 180.0 );
+	var y = Math.cos( this.tilt * Math.PI / 180.0 );
+
+	this.mesh.rotateOnAxis( new THREE.Vector3(x, y, 0), 0.05); 
 
 
 }
