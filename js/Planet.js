@@ -69,7 +69,6 @@ Planet.prototype.update = function( toMove ) {
 
 	var r = this.getR();
 
-	//console.log(toMove);
 
 	if(toMove) {
 		this.X = r * Math.cos(this.angle);
