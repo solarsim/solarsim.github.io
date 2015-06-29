@@ -88,7 +88,6 @@ function initBackground() {
 
 function createPlanetMeshes() {
 
-
 	var texture, material, p;
 	for(var i=0; i<planets.length; i++) {
 		texture = THREE.ImageUtils.loadTexture('img/'+planets[i].name+".jpg", {}, function() {
