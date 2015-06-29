@@ -97,10 +97,10 @@ Planet.prototype.spin = function() {
 	var x = Math.sin( this.tilt * Math.PI / 180.0 );
 	var y = Math.cos( this.tilt * Math.PI / 180.0 );
 
-	this.mesh.rotateOnAxis( new THREE.Vector3(x, y, 0), 0.05); 
-
+	this.mesh.rotateOnAxis(new THREE.Vector3(x, y, 0), 0.05);
 
 }
+
 
 
 

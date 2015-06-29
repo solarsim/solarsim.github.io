@@ -30,11 +30,11 @@ var tweening = false;
 function init() {
 
 	//INIT PLANETS
-	mercury = new Planet("mercury", MERCURY_RADIUS, MERCURY_ECCENTRICITY, MERCURY_PERIHELION);
-	venus = new Planet("venus", VENUS_RADIUS, VENUS_ECCENTRICITY, VENUS_PERIHELION);
-	earth = new Planet("earth", EARTH_RADIUS, EARTH_ECCENTRICITY, EARTH_PERIHELION);
-	mars = new Planet("mars", MARS_RADIUS, MARS_ECCENTRICITY, MARS_PERIHELION);
-	jupiter = new Planet("jupiter", JUPITER_RADIUS, JUPITER_ECCENTRICITY, JUPITER_PERIHELION);
+	mercury = new Planet("mercury", MERCURY_RADIUS, MERCURY_ECCENTRICITY, MERCURY_PERIHELION, MERCURY_TILT);
+	venus = new Planet("venus", VENUS_RADIUS, VENUS_ECCENTRICITY, VENUS_PERIHELION, VENUS_TILT);
+	earth = new Planet("earth", EARTH_RADIUS, EARTH_ECCENTRICITY, EARTH_PERIHELION, EARTH_TILT);
+	mars = new Planet("mars", MARS_RADIUS, MARS_ECCENTRICITY, MARS_PERIHELION, MARS_TILT);
+	jupiter = new Planet("jupiter", JUPITER_RADIUS, JUPITER_ECCENTRICITY, JUPITER_PERIHELION, JUPITER_TILT);
 
 
 	planets = [mercury, venus, earth, mars, jupiter];
@@ -220,6 +220,8 @@ function checkClick() {
 var pos, source, sourceTarget;
 //ZOOM IN ON CLICKED PLANET & TWEEN CAMERA TARGET
 function tweenTo( destination, duration, lookAt) {
+	camera.fov = VIEW_ANGLE;
+
 	tweening = true;
 	console.log("lookAt: "+lookAt.x+" "+lookAt.y+" "+lookAt.z);
 
