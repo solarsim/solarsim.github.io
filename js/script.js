@@ -11,7 +11,7 @@ const VIEW_ANGLE = 45,
 	  FAR = 10000;
 
 var sunMesh, sunLight;
-var mercury, venus, earth, mars, jupiter;
+var mercury, venus, earth, mars, jupiter, saturn;
 var planets;
 
 var segments = 16,
@@ -26,6 +26,12 @@ var backgroundScene, backgroundCamera;
 
 var tweening = false;
 
+init();
+initBackground();
+createPlanetMeshes();
+createRingMeshes();
+createSunMesh();
+
 
 function init() {
 
@@ -35,9 +41,12 @@ function init() {
 	earth = new Planet("earth", EARTH_RADIUS, EARTH_ECCENTRICITY, EARTH_PERIHELION, EARTH_TILT);
 	mars = new Planet("mars", MARS_RADIUS, MARS_ECCENTRICITY, MARS_PERIHELION, MARS_TILT);
 	jupiter = new Planet("jupiter", JUPITER_RADIUS, JUPITER_ECCENTRICITY, JUPITER_PERIHELION, JUPITER_TILT);
+	saturn = new Planet("saturn", SATURN_RADIUS, SATURN_ECCENTRICITY, SATURN_PERIHELION, SATURN_TILT);
+
+	saturn.hasRings = true;
 
 
-	planets = [mercury, venus, earth, mars, jupiter];
+	planets = [mercury, venus, earth, mars, jupiter, saturn];
 
 	//INIT SCENE
 	container = $("#container");
@@ -104,10 +113,40 @@ function createPlanetMeshes() {
 							);
 
 		planets[i].mesh = p;
+		planets[i].parent = new THREE.Object3D();
 
-		scene.add(planets[i].mesh);
-
+		planets[i].parent.rotation.z = (planets[i].tilt) * Math.PI / 180; // rotate parent and add mesh to parent
+		planets[i].parent.add(planets[i].mesh);
+		
+		
+		
+		scene.add(planets[i].parent);
 	}
+}
+
+function createRingMeshes() {
+
+	var texture, material, r;
+
+	texture = THREE.ImageUtils.loadTexture('img/saturnrings.png', {}, function() {
+			renderer.render(scene, camera);
+		});
+
+	material = new THREE.MeshBasicMaterial( { map: texture, side: THREE.DoubleSide, transparent: true } );
+
+	r = new THREE.Mesh( new THREE.RingGeometry (
+								SATURN_RINGS_INNER,
+								SATURN_RINGS_OUTER,
+								3 * segments,
+								3 * segments),
+								material);
+
+	saturn.ringMesh = r;
+	saturn.ringMesh.rotation.x = Math.PI / 2;
+	saturn.ringMesh.rotation.y = (SATURN_TILT) * Math.PI / 180;
+
+	scene.add(saturn.ringMesh);
+
 }
 
 function createSunMesh() {
@@ -134,11 +173,6 @@ function createSunMesh() {
 	scene.add(sunLight);
 
 }
-
-init();
-initBackground();
-createPlanetMeshes();
-createSunMesh();
 
 //ROTATE & ORBIT PLANETS
 function updatePlanets( toMove ) {
@@ -194,7 +228,15 @@ function checkClick() {
 
 	ray.set(camera.position, directionVector);
 
-	var intersects = ray.intersectObjects(scene.children);
+	var objects = scene.children;
+
+	for(var i=0; i<scene.children.length; i++) {
+		var child = scene.children[i];
+		objects = objects.concat(child.children);
+	}
+
+	var intersects = ray.intersectObjects(objects);
+
 	if (intersects.length) {
 
 	    var clicked = intersects[0].object;
@@ -208,7 +250,7 @@ function checkClick() {
 	    		var viewpoint = p.getViewpoint();
 	    		//console.log("before: "+viewpoint.x+" "+viewpoint.y+" "+viewpoint.z);
 	    		var duration = 5 * camera.position.distanceTo(viewpoint);
-	    		tweenTo(viewpoint, duration, p.mesh.position);
+	    		tweenTo(viewpoint, duration, p.parent.position);
 	    	}
 	    }
 	    
@@ -291,7 +333,7 @@ function render() {
 		if(target != null) {
 			var viewpoint = target.getViewpoint();
 			camera.position.set(viewpoint.x, viewpoint.y, viewpoint.z);
-			cameraTarget.copy(target.mesh.position);
+			cameraTarget.copy(target.parent.position);
 		}
 
 	}

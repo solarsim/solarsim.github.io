@@ -7,25 +7,29 @@ const SUN_RADIUS = 75,
 	  VENUS_RADIUS = 10,
 	  EARTH_RADIUS = 10,
 	  MARS_RADIUS = 5,
-	  JUPITER_RADIUS = 20;
+	  JUPITER_RADIUS = 20,
+	  SATURN_RADIUS = 15;
 
 const MERCURY_ECCENTRICITY = 0.21,
 	  VENUS_ECCENTRICITY = .0067,
 	  EARTH_ECCENTRICITY = 0.0167,
 	  MARS_ECCENTRICITY = 0.0934,
-	  JUPITER_ECCENTRICITY = 0.0489;
+	  JUPITER_ECCENTRICITY = 0.0489,
+	  SATURN_ECCENTRICITY = 0.0565;
 
 const MERCURY_PERIHELION = 100,
 	  VENUS_PERIHELION = 200,
 	  EARTH_PERIHELION = 250,
 	  MARS_PERIHELION = 300,
-	  JUPITER_PERIHELION = 375;
+	  JUPITER_PERIHELION = 375,
+	  SATURN_PERIHELION = 425;
 
 const MERCURY_TILT = 0.03,
 	  VENUS_TILT = 177.36,
 	  EARTH_TILT = 23.44,
 	  MARS_TILT = 25.19,
-	  JUPITER_TILT = 3.13;
+	  JUPITER_TILT = 3.13,
+	  SATURN_TILT = 26.73;
 
 
 //PLANET OBJECT
@@ -36,10 +40,13 @@ function Planet(name, radius, eccentricity, perihelion, tilt) {
 	this.perihelion = perihelion;
 	this.tilt = tilt;
 
+	this.parent = null;
 	this.mesh = null;
 	this.angle = 0;
 	this.omega = 0;
 	this.r = 0;
+
+	this.ringMesh = null;
 
 	this.X = 0;
 	this.Z = 0;
@@ -74,7 +81,7 @@ Planet.prototype.update = function( toMove ) {
 		this.X = r * Math.cos(this.angle);
 		this.Z = r * Math.sin(this.angle);
 
-		this.mesh.position.set(this.X, 0, this.Z);
+		this.parent.position.set(this.X, 0, this.Z);
 
 		this.omega = Math.sqrt(G*SUN_MASS / Math.pow(r, 3));
 
@@ -87,6 +94,10 @@ Planet.prototype.update = function( toMove ) {
 		console.log("not moving");
 	}
 
+	if(this.ringMesh != undefined) {
+		this.ringMesh.position.copy(this.parent.position);
+	}
+
 	
 	this.lastUpdated = Date.now();
 	
@@ -97,8 +108,8 @@ Planet.prototype.spin = function() {
 	var x = Math.sin( this.tilt * Math.PI / 180.0 );
 	var y = Math.cos( this.tilt * Math.PI / 180.0 );
 
-	this.mesh.rotateOnAxis(new THREE.Vector3(x, y, 0), 0.05);
-
+	//this.mesh.rotateOnAxis(new THREE.Vector3(x, y, 0), 0.05);
+	this.mesh.rotation.y += 0.05;
 }
 
 
