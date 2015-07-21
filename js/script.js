@@ -169,6 +169,10 @@ function createSunMesh() {
 	sunLight = new THREE.PointLight(0xFFFFFF, 2.5);
 	scene.add(sunLight);
 
+	//AMBIENT BACKGROUND LIGHT
+	var ambient = new THREE.AmbientLight(0x404040);
+	scene.add(ambient);
+
 }
 
 //ROTATE & ORBIT PLANETS
