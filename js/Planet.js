@@ -12,6 +12,8 @@ function Planet(name) {
 	this.perihelion = SUN_RADIUS + window[perihelionName];
 	this.tilt = window[tiltName];
 
+	this.name = this.name.toLowerCase();
+
 	this.parent = null;
 	this.mesh = null;
 	this.angle = 0;
