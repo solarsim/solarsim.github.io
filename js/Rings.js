@@ -14,7 +14,7 @@ function Rings(name, tilt) {
 Rings.getMesh = function(texture, inner, outer, tilt) {
 
 
-	material = new THREE.MeshBasicMaterial( { map: texture, side: THREE.DoubleSide, transparent: true } );
+	material = new THREE.MeshLambertMaterial( { map: texture, side: THREE.DoubleSide, transparent: true } );
 
 	r = new THREE.Mesh( new THREE.RingGeometry (
 								inner,
