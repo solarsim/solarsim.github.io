@@ -1,7 +1,7 @@
 const WIDTH = window.innerWidth, 
 	  HEIGHT = window.innerHeight;
 
-const DEFAULT_CAMERA_POS = new THREE.Vector3(0, 300, 700);
+const DEFAULT_CAMERA_POS = new THREE.Vector3(0, 300, 800);
 
 const DEFAULT_TARGET = new THREE.Vector3(0, 0, 0);
 
@@ -11,7 +11,7 @@ const VIEW_ANGLE = 45,
 	  FAR = 10000;
 
 var sunMesh, sunLight;
-var mercury, venus, earth, mars, jupiter, saturn;
+var mercury, venus, earth, mars, jupiter, saturn, uranus, neptune, pluto;
 var planets;
 
 var segments = 16,
@@ -36,17 +36,19 @@ createSunMesh();
 function init() {
 
 	//INIT PLANETS
-	mercury = new Planet("mercury", MERCURY_RADIUS, MERCURY_ECCENTRICITY, MERCURY_PERIHELION, MERCURY_TILT);
-	venus = new Planet("venus", VENUS_RADIUS, VENUS_ECCENTRICITY, VENUS_PERIHELION, VENUS_TILT);
-	earth = new Planet("earth", EARTH_RADIUS, EARTH_ECCENTRICITY, EARTH_PERIHELION, EARTH_TILT);
-	mars = new Planet("mars", MARS_RADIUS, MARS_ECCENTRICITY, MARS_PERIHELION, MARS_TILT);
-	jupiter = new Planet("jupiter", JUPITER_RADIUS, JUPITER_ECCENTRICITY, JUPITER_PERIHELION, JUPITER_TILT);
-	saturn = new Planet("saturn", SATURN_RADIUS, SATURN_ECCENTRICITY, SATURN_PERIHELION, SATURN_TILT);
+	mercury = new Planet("mercury");
+	venus = new Planet("venus");
+	earth = new Planet("earth");
+	mars = new Planet("mars");
+	jupiter = new Planet("jupiter");
+	saturn = new Planet("saturn");
+	uranus = new Planet("uranus");
+	neptune = new Planet("neptune");
+	pluto = new Planet("pluto");
 
-	saturn.hasRings = true;
 
 
-	planets = [mercury, venus, earth, mars, jupiter, saturn];
+	planets = [mercury, venus, earth, mars, jupiter, saturn, uranus, neptune, pluto];
 
 	//INIT SCENE
 	container = $("#container");
@@ -80,13 +82,15 @@ function init() {
 	renderer.setSize( WIDTH, HEIGHT );
 	document.body.appendChild( renderer.domElement );
 
+	$("#container").hide();
+
 }
 
 function initBackground() {
 	backgroundTexture = THREE.ImageUtils.loadTexture( 'img/bg.jpg' );
 
 	backgroundMesh = new THREE.Mesh(
-		new THREE.SphereGeometry(800, 32, 32),
+		new THREE.SphereGeometry(1000, 32, 32),
 		new THREE.MeshBasicMaterial( { map: backgroundTexture } )
 	);
 
@@ -119,33 +123,26 @@ function createPlanetMeshes() {
 		planets[i].parent.add(planets[i].mesh);
 		
 		
-		
+
 		scene.add(planets[i].parent);
 	}
 }
 
 function createRingMeshes() {
 
-	var texture, material, r;
-
-	texture = THREE.ImageUtils.loadTexture('img/saturnrings.png', {}, function() {
+	var sTexture = THREE.ImageUtils.loadTexture('img/saturnrings.png', {}, function() {
 			renderer.render(scene, camera);
-		});
+	});
 
-	material = new THREE.MeshBasicMaterial( { map: texture, side: THREE.DoubleSide, transparent: true } );
+	var uTexture = THREE.ImageUtils.loadTexture('img/uranusrings.jpg', {}, function() {
+			renderer.render(scene, camera);
+	});
 
-	r = new THREE.Mesh( new THREE.RingGeometry (
-								SATURN_RINGS_INNER,
-								SATURN_RINGS_OUTER,
-								3 * segments,
-								3 * segments),
-								material);
-
-	saturn.ringMesh = r;
-	saturn.ringMesh.rotation.x = Math.PI / 2;
-	saturn.ringMesh.rotation.y = (SATURN_TILT) * Math.PI / 180;
+	saturn.ringMesh = Rings.getMesh(sTexture, SATURN_RINGS_INNER, SATURN_RINGS_OUTER, SATURN_TILT);
+	uranus.ringMesh = Rings.getMesh(uTexture, URANUS_RINGS_INNER, URANUS_RINGS_OUTER, URANUS_TILT);
 
 	scene.add(saturn.ringMesh);
+	scene.add(uranus.ringMesh);
 
 }
 
@@ -209,8 +206,11 @@ var x, y;
 
 function checkClick() {
 
+	console.log("checking");
 	if(target != null) {
 		target = null;
+
+		$("#container").toggle(500);
 
 		var duration = 5 * camera.position.distanceTo(DEFAULT_CAMERA_POS);
 		console.log("DEFAULT_TARGET: "+DEFAULT_TARGET.x+" "+DEFAULT_TARGET.y+" "+DEFAULT_TARGET.z);
@@ -230,20 +230,17 @@ function checkClick() {
 
 	var objects = scene.children;
 
-	for(var i=0; i<scene.children.length; i++) {
-		var child = scene.children[i];
-		objects = objects.concat(child.children);
-	}
-
-	var intersects = ray.intersectObjects(objects);
+	var intersects = ray.intersectObjects(objects, true);
 
 	if (intersects.length) {
 
-	    var clicked = intersects[0].object;
+	    var uuid = intersects[0].object.uuid;
+
 
 	    for(var i=0; i<planets.length; i++) {
 	    	var p = planets[i];
-	    	if(p.mesh == clicked) {
+
+	    	if(p.mesh.uuid === uuid) {
 	    		
 	    		target = p;
 	    		
@@ -255,8 +252,6 @@ function checkClick() {
 	    }
 	    
 	}
-
-	clickInfo.userHasClicked = false;
 }
 
 var pos, source, sourceTarget;
@@ -281,6 +276,9 @@ function tweenTo( destination, duration, lookAt) {
                 camera.position.copy( source );
             })
         .onComplete( function() {
+
+        	if(destination != DEFAULT_CAMERA_POS)
+        		$("#container").toggle(500);
         	tweening = false;
         })
         .start();
@@ -341,6 +339,7 @@ function render() {
 	
 
 	if(clickInfo.userHasClicked) {
+		clickInfo.userHasClicked = false;
 		checkClick();
 	}
 	
@@ -354,6 +353,7 @@ function render() {
 	controls.update();
 
 	stats.end();
+
 
 }
 render();
