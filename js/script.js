@@ -103,11 +103,11 @@ function createPlanetMeshes() {
 
 	var texture, material, p;
 	for(var i=0; i<planets.length; i++) {
-		texture = THREE.ImageUtils.loadTexture('img/'+planets[i].name+".jpg", {}, function() {
+		texture = THREE.ImageUtils.loadTexture('img/'+planets[i].name.toLowerCase()+".jpg", {}, function() {
 			renderer.render(scene, camera);
 		});
 		texture.needsUpdate = true;
-		material = new THREE.MeshLambertMaterial( { map: texture });
+		material = new THREE.MeshPhongMaterial( { map: texture });
 
 		p = new THREE.Mesh( new THREE.SphereGeometry (
 								planets[i].radius,
@@ -166,7 +166,7 @@ function createSunMesh() {
 
 
 	//SUN LIGHT SOURCE
-	sunLight = new THREE.PointLight(0xFFFFFF, 2.5);
+	sunLight = new THREE.PointLight(0xFFFFFF, 2.2);
 	scene.add(sunLight);
 
 	//AMBIENT BACKGROUND LIGHT
@@ -247,6 +247,8 @@ function checkClick() {
 	    	if(p.mesh.uuid === uuid) {
 	    		
 	    		target = p;
+
+	    		updateInfoBox(p);
 	    		
 	    		var viewpoint = p.getViewpoint();
 	    		//console.log("before: "+viewpoint.x+" "+viewpoint.y+" "+viewpoint.z);
@@ -281,8 +283,10 @@ function tweenTo( destination, duration, lookAt) {
             })
         .onComplete( function() {
 
-        	if(destination != DEFAULT_CAMERA_POS)
+        	if(destination != DEFAULT_CAMERA_POS) {
         		$("#container").toggle(500);
+        	}
+        		
         	tweening = false;
         })
         .start();
@@ -299,6 +303,29 @@ function tweenTo( destination, duration, lookAt) {
 		}).start();
 
 	
+}
+
+function updateInfoBox(planet) {
+	var name = planet.name;
+
+	var radius = window[name + "_RADIUS_REAL"];
+	var mass = window[name+"_MASS"];
+	var day = window[name+"_DAY"];
+	var year = window[name+"_YEAR"];
+	var eccentricity = window[name+"_ECCENTRICITY"];
+	var tilt = window[name+"_TILT"];
+	var perihelion = window[name+"_PERIHELION_REAL"];
+	var aphelion = window[name+"_APHELION_REAL"];
+
+	$('#planetname').text(capitalize(name.toLowerCase()));
+	$('#radius .info').text(radius + " km");
+	$('#mass .info').text(mass + " x 10^" + MASS_FACTOR + " kg");
+	$('#day .info').text(day + " hrs");
+	$('#year .info').text(year + " days");
+	$('#eccentricity .info').text(eccentricity);
+	$('#tilt .info').text(tilt);
+	$('#perihelion .info').text(perihelion + " x 10^" + DISTANCE_FACTOR + " km");
+	$('#aphelion .info').text(aphelion + " x 10^" + DISTANCE_FACTOR + " km");
 }
 
 
@@ -359,6 +386,10 @@ function render() {
 	stats.end();
 
 
+}
+
+function capitalize(string) {
+	return string.charAt(0).toUpperCase() + string.substring(1);
 }
 render();
 

@@ -12,8 +12,6 @@ function Planet(name) {
 	this.perihelion = SUN_RADIUS + window[perihelionName];
 	this.tilt = window[tiltName];
 
-	this.name = this.name.toLowerCase();
-
 	this.parent = null;
 	this.mesh = null;
 	this.angle = 0;
@@ -86,51 +84,7 @@ Planet.prototype.spin = function() {
 	this.mesh.rotation.y += 0.05;
 }
 
-//CONSTANTS
-const G = 6.67*Math.pow(10, -11);
 
-const SUN_MASS = 6*Math.pow(10, 15);
-
-const SUN_RADIUS = 75,
-	  MERCURY_RADIUS = 5,
-	  VENUS_RADIUS = 10,
-	  EARTH_RADIUS = 10,
-	  MARS_RADIUS = 5,
-	  JUPITER_RADIUS = 20,
-	  SATURN_RADIUS = 15,
-	  URANUS_RADIUS = 15,
-	  NEPTUNE_RADIUS = 17,
-	  PLUTO_RADIUS = 5;
-
-const MERCURY_ECCENTRICITY = 0.21,
-	  VENUS_ECCENTRICITY = .0067,
-	  EARTH_ECCENTRICITY = 0.0167,
-	  MARS_ECCENTRICITY = 0.0934,
-	  JUPITER_ECCENTRICITY = 0.0489,
-	  SATURN_ECCENTRICITY = 0.0565,
-	  URANUS_ECCENTRICITY = 0.04725,
-	  NEPTUNE_ECCENTRICITY = 0.0113,
-	  PLUTO_ECCENTRICITY = 0.2488;
-
-const MERCURY_PERIHELION = 15,
-	  VENUS_PERIHELION = 75,
-	  EARTH_PERIHELION = 125,
-	  MARS_PERIHELION = 175,
-	  JUPITER_PERIHELION = 225,
-	  SATURN_PERIHELION = 325,
-	  URANUS_PERIHELION = 400,
-	  NEPTUNE_PERIHELION = 450,
-	  PLUTO_PERIHELION = 475;
-
-const MERCURY_TILT = 0.03,
-	  VENUS_TILT = 177.36,
-	  EARTH_TILT = 23.44,
-	  MARS_TILT = 25.19,
-	  JUPITER_TILT = 3.13,
-	  SATURN_TILT = 26.73,
-	  URANUS_TILT = 97.77,
-	  NEPTUNE_TILT = 28.32,
-	  PLUTO_TILT = 122.53;
 
 
 

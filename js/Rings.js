@@ -1,6 +1,6 @@
 const SATURN_RINGS_INNER = 1.5 * SATURN_RADIUS,
 	  SATURN_RINGS_OUTER = 2.5 * SATURN_RADIUS,
-	  URANUS_RINGS_INNER = 1.75 * URANUS_RADIUS,
+	  URANUS_RINGS_INNER = 1.5 * URANUS_RADIUS,
 	  URANUS_RINGS_OUTER = 2.0 * URANUS_RADIUS;
 
 //RING OBJECT
@@ -14,7 +14,7 @@ function Rings(name, tilt) {
 Rings.getMesh = function(texture, inner, outer, tilt) {
 
 
-	material = new THREE.MeshLambertMaterial( { map: texture, side: THREE.DoubleSide, transparent: true } );
+	material = new THREE.MeshBasicMaterial( { map: texture, side: THREE.DoubleSide, transparent: true } );
 
 	r = new THREE.Mesh( new THREE.RingGeometry (
 								inner,
