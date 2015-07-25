@@ -26,6 +26,33 @@ var backgroundScene, backgroundCamera;
 
 var tweening = false;
 
+$(document).ready(function() {
+
+	$('.planetbutton').click(function() {
+		handleClick($(this).attr('id'));
+	});
+
+});
+
+function handleClick( planetName ) {
+	var p;
+	for(var i=0; i<planets.length; i++) {
+		p = planets[i];
+		if(p.name.toLowerCase() === planetName.toLowerCase() ) {
+
+				target = p;
+
+	    		updateInfoBox(p);
+	    		
+	    		var viewpoint = p.getViewpoint();
+	    		//console.log("before: "+viewpoint.x+" "+viewpoint.y+" "+viewpoint.z);
+	    		var duration = getDuration(viewpoint);
+	    		tweenTo(viewpoint, duration, p.parent.position);
+
+		}
+	}
+}
+
 init();
 initBackground();
 createPlanetMeshes();
@@ -69,14 +96,6 @@ function init() {
 	controls = new THREE.OrbitControls(camera, renderer.domElement);
 	controls.noPan = true;
 	controls.noZoom = true;
-
-	stats = new Stats();
-	stats.setMode( 0 ); // 0: fps, 1: ms, 2: mb
-	stats.domElement.style.position = 'absolute';
-	stats.domElement.style.left = '0px';
-	stats.domElement.style.bottom = '0px';
-
-	document.body.appendChild( stats.domElement );
 
 
 	renderer.setSize( WIDTH, HEIGHT );
@@ -188,6 +207,10 @@ function spinPlanets() {
 	}
 }
 
+function getDuration( destination ) {
+	return 1000;
+}
+
 //PICK OBJECTS
 var target = null;
 var ray = new THREE.Raycaster();
@@ -210,13 +233,13 @@ var x, y;
 
 function checkClick() {
 
-	console.log("checking");
+
 	if(target != null) {
 		target = null;
 
 		$("#container").toggle(500);
 
-		var duration = 5 * camera.position.distanceTo(DEFAULT_CAMERA_POS);
+		var duration = 3 * getDuration(DEFAULT_CAMERA_POS);
 		console.log("DEFAULT_TARGET: "+DEFAULT_TARGET.x+" "+DEFAULT_TARGET.y+" "+DEFAULT_TARGET.z);
 		tweenTo(DEFAULT_CAMERA_POS, duration, DEFAULT_TARGET);
 		return;
@@ -252,7 +275,7 @@ function checkClick() {
 	    		
 	    		var viewpoint = p.getViewpoint();
 	    		//console.log("before: "+viewpoint.x+" "+viewpoint.y+" "+viewpoint.z);
-	    		var duration = 5 * camera.position.distanceTo(viewpoint);
+	    		var duration = 3 * getDuration(viewpoint);
 	    		tweenTo(viewpoint, duration, p.parent.position);
 	    	}
 	    }
@@ -260,7 +283,6 @@ function checkClick() {
 	}
 }
 
-var pos, source, sourceTarget;
 //ZOOM IN ON CLICKED PLANET & TWEEN CAMERA TARGET
 function tweenTo( destination, duration, lookAt) {
 	camera.fov = VIEW_ANGLE;
@@ -268,9 +290,9 @@ function tweenTo( destination, duration, lookAt) {
 	tweening = true;
 	console.log("lookAt: "+lookAt.x+" "+lookAt.y+" "+lookAt.z);
 
-	pos = camera.position;
-	source = { x: pos.x, y: pos.y, z: pos.z };
-	sourceTarget = { x: cameraTarget.x, y: cameraTarget.y, z: cameraTarget.z };
+	var pos = camera.position;
+	var source = { x: pos.x, y: pos.y, z: pos.z };
+	var sourceTarget = { x: cameraTarget.x, y: cameraTarget.y, z: cameraTarget.z };
 	console.log("camera target before: "+sourceTarget.x+" "+sourceTarget.y+" "+sourceTarget.z);
 
 	new TWEEN.Tween( source )
@@ -284,7 +306,7 @@ function tweenTo( destination, duration, lookAt) {
         .onComplete( function() {
 
         	if(destination != DEFAULT_CAMERA_POS) {
-        		$("#container").toggle(500);
+        		$("#container").show(500);
         	}
         		
         	tweening = false;
@@ -348,7 +370,6 @@ document.addEventListener('DOMMouseScroll', onMouseWheel, false);
 
 //RENDER SCENE
 function render() {
-	stats.begin();
 	requestAnimationFrame( render );
 
 	spinPlanets();
@@ -382,8 +403,6 @@ function render() {
 
 	TWEEN.update();
 	controls.update();
-
-	stats.end();
 
 
 }

@@ -2,8 +2,60 @@ body {
 	margin: 0;
 	width: 100%;
 	height: 100%;
+	padding: 0;
+	overflow: hidden;
 }
 
+/* Planet Buttons */
+table {
+	position: absolute;
+	width: 72%;
+	height: 5%;
+	margin: 0;
+	margin-left: 14%;
+	
+	bottom: 0;
+	padding: 0;
+	border-spacing: 0;
+}
+
+td:first-child .planetbutton div{
+	border-top-left-radius: 10px;
+	border-left: 0px;
+}
+
+td:last-child .planetbutton div{
+	border-top-right-radius: 10px;
+}
+
+.planetbutton {
+	height: 100%;
+	width: 100%;
+	text-align: center;
+	color: white;
+	text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+	margin: 0;
+	display: table;
+	border-left: 1px solid black;
+	font-family: 'Anonymous Pro';
+	font-size: 3vh;
+	
+}
+
+
+.planetbutton div {
+	display: table-cell;
+	vertical-align: middle;
+	transition: background-color 0.5s ease;
+	background-color: #424242;
+}
+
+.planetbutton div:hover {
+	background-color: #FFEE58;
+	cursor: pointer;
+}
+
+/* Info Box */
 #container {
 	position: absolute;
 	color:white;
