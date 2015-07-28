@@ -4,6 +4,25 @@ body {
 	height: 100%;
 	padding: 0;
 	overflow: hidden;
+	font-family: 'Anonymous Pro';
+}
+
+/* Title */
+#titlecontainer {
+	position: absolute;
+	margin: 0 auto;
+	color: white;
+	width: 100%;
+	text-align: center;
+	padding: 0;
+}
+
+#titlecontainer h1 {
+	margin: 0.5%;
+}
+
+#titlecontainer p {
+	margin-top: 0;
 }
 
 /* Planet Buttons */
@@ -37,7 +56,6 @@ td:last-child .planetbutton div{
 	margin: 0;
 	display: table;
 	border-left: 1px solid black;
-	font-family: 'Anonymous Pro';
 	font-size: 3vh;
 	
 }
@@ -56,13 +74,13 @@ td:last-child .planetbutton div{
 }
 
 /* Info Box */
-#container {
+#infocontainer {
 	position: absolute;
 	color:white;
 	width: 30%;
 	height: 60%;
 	top: 5%;
-	right: 5%;
+	right: 2%;
 	background-color: rgba(0,0,0,0.5);
 	border-radius: 5%;
 	padding: 10px;
@@ -73,7 +91,6 @@ td:last-child .planetbutton div{
 	/*border: 2px solid red;*/
 	padding: 10px;
 	padding-top: 20px;
-	font-family: 'Anonymous Pro';
 	font-weight: 400;
 
 }

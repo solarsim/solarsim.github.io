@@ -62,8 +62,6 @@ Planet.prototype.update = function( toMove ) {
 		if(this.angle >= 6.28) {
 			this.angle = 0;
 		}
-	} else {
-		console.log("not moving");
 	}
 
 	if(this.ringMesh != undefined) {

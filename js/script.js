@@ -17,7 +17,7 @@ var planets;
 var segments = 16,
 	rings = 16;
 
-var container, renderer, camera, scene;
+var renderer, camera, scene;
 var cameraTarget = new THREE.Vector3();
 var stats, controls;
 
@@ -45,7 +45,7 @@ function handleClick( planetName ) {
 	    		updateInfoBox(p);
 	    		
 	    		var viewpoint = p.getViewpoint();
-	    		//console.log("before: "+viewpoint.x+" "+viewpoint.y+" "+viewpoint.z);
+
 	    		var duration = getDuration(viewpoint);
 	    		tweenTo(viewpoint, duration, p.parent.position);
 
@@ -69,7 +69,7 @@ function init() {
 	mars = new Planet("mars");
 	jupiter = new Planet("jupiter");
 	saturn = new Planet("saturn");
-	uranus = new Planet("uranus");
+	uranus /* is bleeding */ = new Planet("uranus");
 	neptune = new Planet("neptune");
 	pluto = new Planet("pluto");
 
@@ -78,7 +78,6 @@ function init() {
 	planets = [mercury, venus, earth, mars, jupiter, saturn, uranus, neptune, pluto];
 
 	//INIT SCENE
-	container = $("#container");
 
 	renderer = new THREE.WebGLRenderer();
 	camera = new THREE.PerspectiveCamera( 
@@ -101,7 +100,7 @@ function init() {
 	renderer.setSize( WIDTH, HEIGHT );
 	document.body.appendChild( renderer.domElement );
 
-	$("#container").hide();
+	$("#infocontainer").hide();
 
 }
 
@@ -208,7 +207,7 @@ function spinPlanets() {
 }
 
 function getDuration( destination ) {
-	return 1000;
+	return 3000;
 }
 
 //PICK OBJECTS
@@ -237,10 +236,10 @@ function checkClick() {
 	if(target != null) {
 		target = null;
 
-		$("#container").toggle(500);
+		$("#infocontainer").hide(500);
 
-		var duration = 3 * getDuration(DEFAULT_CAMERA_POS);
-		console.log("DEFAULT_TARGET: "+DEFAULT_TARGET.x+" "+DEFAULT_TARGET.y+" "+DEFAULT_TARGET.z);
+		var duration = getDuration(DEFAULT_CAMERA_POS);
+
 		tweenTo(DEFAULT_CAMERA_POS, duration, DEFAULT_TARGET);
 		return;
 	}
@@ -274,8 +273,8 @@ function checkClick() {
 	    		updateInfoBox(p);
 	    		
 	    		var viewpoint = p.getViewpoint();
-	    		//console.log("before: "+viewpoint.x+" "+viewpoint.y+" "+viewpoint.z);
-	    		var duration = 3 * getDuration(viewpoint);
+
+	    		var duration = getDuration(viewpoint);
 	    		tweenTo(viewpoint, duration, p.parent.position);
 	    	}
 	    }
@@ -288,16 +287,17 @@ function tweenTo( destination, duration, lookAt) {
 	camera.fov = VIEW_ANGLE;
 
 	tweening = true;
-	console.log("lookAt: "+lookAt.x+" "+lookAt.y+" "+lookAt.z);
+
+	TWEEN.removeAll(); //remove all running tweens (if called before tweens complete)
+
 
 	var pos = camera.position;
 	var source = { x: pos.x, y: pos.y, z: pos.z };
 	var sourceTarget = { x: cameraTarget.x, y: cameraTarget.y, z: cameraTarget.z };
-	console.log("camera target before: "+sourceTarget.x+" "+sourceTarget.y+" "+sourceTarget.z);
+
 
 	new TWEEN.Tween( source )
         .to( destination, duration )
-        .delay( 0 )
         .easing( TWEEN.Easing.Quartic.InOut )
         .onUpdate ( function()
             {
@@ -305,8 +305,9 @@ function tweenTo( destination, duration, lookAt) {
             })
         .onComplete( function() {
 
-        	if(destination != DEFAULT_CAMERA_POS) {
-        		$("#container").show(500);
+
+        	if(!(areEqual(camera.position, DEFAULT_CAMERA_POS))) {
+        		$("#infocontainer").show(500);
         	}
         		
         	tweening = false;
@@ -314,14 +315,11 @@ function tweenTo( destination, duration, lookAt) {
         .start();
 
     new TWEEN.Tween(sourceTarget)
-    	.to(lookAt, duration)
+    	.to( lookAt, duration )
     	.easing(TWEEN.Easing.Quartic.InOut)
     	.onUpdate(function () {
     		cameraTarget.copy(sourceTarget);
-    		//console.log("updating");
-		})
-		.onComplete(function () {
-		    console.log("camera target after: "+cameraTarget.x+" "+cameraTarget.y+" "+sourceTarget.z);
+
 		}).start();
 
 	
@@ -394,6 +392,10 @@ function render() {
 		clickInfo.userHasClicked = false;
 		checkClick();
 	}
+
+	if(camera.position == DEFAULT_CAMERA_POS) {
+		$('#infocontainer').hide(500);
+	}
 	
 	camera.lookAt(cameraTarget);
 	
@@ -410,6 +412,11 @@ function render() {
 function capitalize(string) {
 	return string.charAt(0).toUpperCase() + string.substring(1);
 }
+
+function areEqual( vector1, vector2 ) {
+	return vector1.x === vector2.x && vector1.y === vector2.y && vector1.z === vector2.z;
+}
+
 render();
 
 
