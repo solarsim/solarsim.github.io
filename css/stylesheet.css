@@ -25,6 +25,19 @@ body {
 	margin-top: 0;
 }
 
+i {
+	-webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+i:hover {
+	cursor: pointer;
+}
+
 /* Planet Buttons */
 table {
 	position: absolute;
@@ -57,6 +70,13 @@ td:last-child .planetbutton div{
 	display: table;
 	border-left: 1px solid black;
 	font-size: 3vh;
+
+	-webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 	
 }
 

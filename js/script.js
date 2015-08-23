@@ -8,7 +8,7 @@ const DEFAULT_TARGET = new THREE.Vector3(0, 0, 0);
 const VIEW_ANGLE = 45,
 	  ASPECT = WIDTH / HEIGHT,
 	  NEAR = 0.1,
-	  FAR = 10000;
+	  FAR = 1000000;
 
 var sunMesh, sunLight;
 var mercury, venus, earth, mars, jupiter, saturn, uranus, neptune, pluto;
@@ -24,6 +24,7 @@ var stats, controls;
 var backgroundTexture, backgroundMesh;
 var backgroundScene, backgroundCamera;
 
+var update = true;
 var tweening = false;
 
 $(document).ready(function() {
@@ -32,6 +33,22 @@ $(document).ready(function() {
 		handleClick($(this).attr('id'));
 	});
 
+	$('#rewind').click(function() {
+		PlanetInfo.setSunMass( PlanetInfo.getSunMass() / 10 );
+		PlanetInfo.setRotationSpeed( PlanetInfo.getRotationSpeed() / 2);
+	});
+
+	$('#forward').click(function() {
+		PlanetInfo.setSunMass( PlanetInfo.getSunMass() * 10 );
+		PlanetInfo.setRotationSpeed( PlanetInfo.getRotationSpeed() * 2);
+	})
+
+	$('#pause').click(function() {
+		$(this).toggleClass('fa-pause');
+		$(this).toggleClass('fa-play');
+
+		update = !update;
+	});
 });
 
 function handleClick( planetName ) {
@@ -69,11 +86,9 @@ function init() {
 	mars = new Planet("mars");
 	jupiter = new Planet("jupiter");
 	saturn = new Planet("saturn");
-	uranus /* is bleeding */ = new Planet("uranus");
+	uranus = new Planet("uranus");
 	neptune = new Planet("neptune");
 	pluto = new Planet("pluto");
-
-
 
 	planets = [mercury, venus, earth, mars, jupiter, saturn, uranus, neptune, pluto];
 
@@ -106,9 +121,10 @@ function init() {
 
 function initBackground() {
 	backgroundTexture = THREE.ImageUtils.loadTexture( 'img/bg.jpg' );
+	backgroundTexture.minFilter = THREE.LinearFilter;
 
 	backgroundMesh = new THREE.Mesh(
-		new THREE.SphereGeometry(1000, 32, 32),
+		new THREE.SphereGeometry(PLUTO_APHELION * DISTANCE_FACTOR + 100, 32, 32),
 		new THREE.MeshBasicMaterial( { map: backgroundTexture } )
 	);
 
@@ -125,6 +141,7 @@ function createPlanetMeshes() {
 			renderer.render(scene, camera);
 		});
 		texture.needsUpdate = true;
+		texture.minFilter = THREE.LinearFilter;
 		material = new THREE.MeshPhongMaterial( { map: texture });
 
 		p = new THREE.Mesh( new THREE.SphereGeometry (
@@ -156,6 +173,9 @@ function createRingMeshes() {
 			renderer.render(scene, camera);
 	});
 
+	sTexture.minFilter = THREE.LinearFilter;
+	uTexture.minFilter = THREE.LinearFilter;
+
 	saturn.ringMesh = Rings.getMesh(sTexture, SATURN_RINGS_INNER, SATURN_RINGS_OUTER, SATURN_TILT);
 	uranus.ringMesh = Rings.getMesh(uTexture, URANUS_RINGS_INNER, URANUS_RINGS_OUTER, URANUS_TILT);
 
@@ -171,10 +191,12 @@ function createSunMesh() {
 	texture = THREE.ImageUtils.loadTexture('img/sun.jpg', {}, function() {
 		renderer.render(scene, camera);
 	});
+	texture.minFilter = THREE.LinearFilter;
+
 	material = new THREE.MeshBasicMaterial( { map: texture });
 
 	sunMesh = new THREE.Mesh( new THREE.SphereGeometry(
-									Planet.SUN_RADIUS,
+									SUN_RADIUS,
 									segments,
 									rings),
 									material
@@ -197,12 +219,6 @@ function createSunMesh() {
 function updatePlanets( toMove ) {
 	for(var i=0; i<planets.length; i++) {
 		planets[i].update( toMove );
-	}
-}
-
-function spinPlanets() {
-	for(var i=0; i<planets.length; i++) {
-		planets[i].spin();
 	}
 }
 
@@ -334,18 +350,18 @@ function updateInfoBox(planet) {
 	var year = window[name+"_YEAR"];
 	var eccentricity = window[name+"_ECCENTRICITY"];
 	var tilt = window[name+"_TILT"];
-	var perihelion = window[name+"_PERIHELION_REAL"];
-	var aphelion = window[name+"_APHELION_REAL"];
+	var perihelion = window[name+"_PERIHELION"];
+	var aphelion = window[name+"_APHELION"];
 
 	$('#planetname').text(capitalize(name.toLowerCase()));
 	$('#radius .info').text(radius + " km");
-	$('#mass .info').text(mass + " x 10^" + MASS_FACTOR + " kg");
+	$('#mass .info').text(mass + " x 10^" + MASS_ORDER + " kg");
 	$('#day .info').text(day + " hrs");
-	$('#year .info').text(year + " days");
+	$('#year .info').text(year + " Earth days");
 	$('#eccentricity .info').text(eccentricity);
 	$('#tilt .info').text(tilt);
-	$('#perihelion .info').text(perihelion + " x 10^" + DISTANCE_FACTOR + " km");
-	$('#aphelion .info').text(aphelion + " x 10^" + DISTANCE_FACTOR + " km");
+	$('#perihelion .info').text(perihelion + " x 10^" + DISTANCE_ORDER + " km");
+	$('#aphelion .info').text(aphelion + " x 10^" + DISTANCE_ORDER + " km");
 }
 
 
@@ -370,7 +386,6 @@ document.addEventListener('DOMMouseScroll', onMouseWheel, false);
 function render() {
 	requestAnimationFrame( render );
 
-	spinPlanets();
 	var toMove = !tweening || target == null; // only stop orbiting planets if 
 											  // tweening TO a planet
 
@@ -404,7 +419,7 @@ function render() {
 	renderer.render( scene, camera );
 
 	TWEEN.update();
-	controls.update();
+	//controls.update();
 
 
 }
