@@ -61,15 +61,6 @@ table {
 	border-spacing: 0;
 }
 
-td:first-child .planetbutton div{
-	border-top-left-radius: 10px;
-	border-left: 0px;
-}
-
-td:last-child .planetbutton div{
-	border-top-right-radius: 10px;
-}
-
 .planetbutton {
 	height: 100%;
 	width: 100%;
@@ -101,6 +92,15 @@ td:last-child .planetbutton div{
 .planetbutton div:hover {
 	background-color: #FFEE58;
 	cursor: pointer;
+}
+
+td:first-child .planetbutton div{
+	border-top-left-radius: 10px;
+	border-left: 0px;
+}
+
+td:last-child .planetbutton div{
+	border-top-right-radius: 10px;
 }
 
 /* Info Box */
