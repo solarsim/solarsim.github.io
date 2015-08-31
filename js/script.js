@@ -41,7 +41,7 @@ $(document).ready(function() {
 	$('#forward').click(function() {
 		PlanetInfo.setSunMass( PlanetInfo.getSunMass() * 10 );
 		PlanetInfo.setRotationSpeed( PlanetInfo.getRotationSpeed() * 2);
-	})
+	});
 
 	$('#pause').click(function() {
 		$(this).toggleClass('fa-pause');
@@ -55,7 +55,9 @@ function handleClick( planetName ) {
 	var p;
 	for(var i=0; i<planets.length; i++) {
 		p = planets[i];
-		if(p.name.toLowerCase() === planetName.toLowerCase() ) {
+		if(p.name.toLowerCase() === planetName.toLowerCase()) {
+
+			if(target == null || !(target.name === p.name)) {
 
 				target = p;
 
@@ -65,6 +67,7 @@ function handleClick( planetName ) {
 
 	    		var duration = getDuration(viewpoint);
 	    		tweenTo(viewpoint, duration, p.parent.position);
+		    }
 
 		}
 	}
@@ -111,8 +114,8 @@ function init() {
 	controls.noPan = true;
 	controls.noZoom = true;
 
-
-	renderer.setSize( WIDTH, HEIGHT );
+	var size = getViewportSize();
+	renderer.setSize( size.width, size.height );
 	document.body.appendChild( renderer.domElement );
 
 	$("#infocontainer").hide();
@@ -322,7 +325,9 @@ function tweenTo( destination, duration, lookAt) {
         .onComplete( function() {
 
 
-        	if(!(areEqual(camera.position, DEFAULT_CAMERA_POS))) {
+        	if(!(areEqual(destination, DEFAULT_CAMERA_POS))) {
+        		// console.log(camera.position.x+", "+camera.position.y+" "+camera.position.z);
+        		// console.log(DEFAULT_CAMERA_POS.x+", "+DEFAULT_CAMERA_POS.y+", "+DEFAULT_CAMERA_POS.z);
         		$("#infocontainer").show(500);
         	}
         		
@@ -418,10 +423,26 @@ function render() {
 	renderer.clear();
 	renderer.render( scene, camera );
 
+	//console.log(target);
+
 	TWEEN.update();
 	//controls.update();
 
 
+}
+
+function getViewportSize() {
+    if(typeof(window.innerWidth) == 'number'){
+        my_width = window.innerWidth;
+        my_height = window.innerHeight;
+    }else if(document.documentElement && (document.documentElement.clientWidth || document.documentElement.clientHeight)){
+        my_width = document.documentElement.clientWidth;
+        my_height = document.documentElement.clientHeight;
+    }else if(document.body && (document.body.clientWidth || document.body.clientHeight)){
+        my_width = document.body.clientWidth;
+        my_height = document.body.clientHeight;
+    }
+    return {width: my_width, height: my_height};
 }
 
 function capitalize(string) {

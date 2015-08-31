@@ -38,6 +38,16 @@ i:hover {
 	cursor: pointer;
 }
 
+a {
+	color: white;
+	text-decoration: underline;
+}
+
+a:hover {
+	cursor: pointer;
+}
+
+
 /* Planet Buttons */
 table {
 	position: absolute;
