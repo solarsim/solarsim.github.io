@@ -30,9 +30,3 @@ Rings.getMesh = function(texture, inner, outer, tilt) {
 	return r;
 
 }
-// Rings.prototype.setMesh(mesh) {
-
-// 	this.mesh = mesh;
-// 	this.mesh.rotation.x = Math.PI / 2;
-// 	this.mesh.rotation.y = (180-tilt) * Math.PI / 180;
-// }

@@ -1,18 +1,33 @@
 
 function PlanetInfo() {}
 
+/*
+	Sets the mass of the sun. The sun's mass
+	determines the duration of a planet's orbit.
+*/
 PlanetInfo.setSunMass = function( mass ) {
 	this.sunMass = mass;
 }
 
+/* 
+	Returns the current mass of the sun.
+*/
 PlanetInfo.getSunMass = function() {
 	return this.sunMass;
 }
 
+/*
+	Sets the speed at which all planets rotate
+	on their axis. 
+*/
 PlanetInfo.setRotationSpeed = function( speed ) {
 	this.rotation = speed;
 }
 
+/*
+	Returns the current speed at which planets
+	are rotating.
+*/
 PlanetInfo.getRotationSpeed = function() {
 	return this.rotation;
 }
@@ -20,7 +35,11 @@ PlanetInfo.getRotationSpeed = function() {
 PlanetInfo.setSunMass ( 1.989 * Math.pow(10, 25)); //not accurate, scaled down
 PlanetInfo.setRotationSpeed( 0.05 );
 
-//CONSTANTS
+/*
+	All constants about planets such as orbital
+	ecentricity, axial tilts, and information
+	about each planet's orbit.
+*/
 const G                       =  6.67*Math.pow(10, -11);
 
 const MERCURY_ECCENTRICITY    =  0.2100,
@@ -75,17 +94,6 @@ const MERCURY_APHELION  	  =  69.82,
 	  URANUS_APHELION    	  =  3003.62,
 	  NEPTUNE_APHELION   	  =  4545.67,
 	  PLUTO_APHELION     	  =  7375.93;
-
-// const MERCURY_RADIUS          =  MERCURY_RADIUS_REAL / 2000,
-// 	  VENUS_RADIUS            =  VENUS_RADIUS_REAL / 2000,
-// 	  EARTH_RADIUS            =  EARTH_RADIUS_REAL / 2000,
-// 	  MARS_RADIUS             =  MARS_RADIUS_REAL / 2000,
-// 	  JUPITER_RADIUS          =  parseInt(JUPITER_RADIUS_REAL.replace(',', '')) / 2000,
-// 	  SATURN_RADIUS           =  parseInt(SATURN_RADIUS_REAL.replace(',', '')) / 2000,
-// 	  URANUS_RADIUS           =  parseInt(NEPTUNE_RADIUS_REAL.replace(',', '')) / 2000,
-// 	  NEPTUNE_RADIUS          =  parseInt(URANUS_RADIUS_REAL.replace(',', '')) / 2000,
-// 	  PLUTO_RADIUS            =  PLUTO_RADIUS_REAL / 2000,
-// 	  SUN_RADIUS 			  =  SUN_RADIUS_REAL / 2000;
 
 const SUN_RADIUS              =  75,
 	  MERCURY_RADIUS          =  5,

@@ -10,6 +10,8 @@ const VIEW_ANGLE = 45,
 	  NEAR = 0.1,
 	  FAR = 1000000;
 
+const TWEEN_DURATION = 3000;
+
 var sunMesh, sunLight;
 var mercury, venus, earth, mars, jupiter, saturn, uranus, neptune, pluto;
 var planets;
@@ -26,6 +28,7 @@ var backgroundScene, backgroundCamera;
 
 var update = true;
 var tweening = false;
+
 
 $(document).ready(function() {
 
@@ -51,6 +54,21 @@ $(document).ready(function() {
 	});
 });
 
+/*
+	Initializes scene, camera, and all
+	meshes.
+*/
+init();
+initBackground();
+createPlanetMeshes();
+createRingMeshes();
+createSunMesh();
+
+/*
+	Determines which planet button has been
+	clicked and then updates the info box
+	accordingly.
+*/
 function handleClick( planetName ) {
 	var p;
 	for(var i=0; i<planets.length; i++) {
@@ -65,21 +83,16 @@ function handleClick( planetName ) {
 	    		
 	    		var viewpoint = p.getViewpoint();
 
-	    		var duration = getDuration(viewpoint);
-	    		tweenTo(viewpoint, duration, p.parent.position);
+	    		tweenTo(viewpoint, TWEEN_DURATION, p.parent.position);
 		    }
 
 		}
 	}
 }
 
-init();
-initBackground();
-createPlanetMeshes();
-createRingMeshes();
-createSunMesh();
-
-
+/*
+	Initializes scene, camera, and all Planets.
+*/
 function init() {
 
 	//INIT PLANETS
@@ -122,6 +135,9 @@ function init() {
 
 }
 
+/*
+	Initalizes the background sphere and mesh.
+*/
 function initBackground() {
 	backgroundTexture = THREE.ImageUtils.loadTexture( 'img/bg.jpg' );
 	backgroundTexture.minFilter = THREE.LinearFilter;
@@ -136,6 +152,11 @@ function initBackground() {
 	scene.add(backgroundMesh);
 }
 
+/*
+	Creates all sphere meshes for each Planet
+	and adds all meshes to scene in correct
+	locations.
+*/
 function createPlanetMeshes() {
 
 	var texture, material, p;
@@ -158,7 +179,7 @@ function createPlanetMeshes() {
 		planets[i].parent = new THREE.Object3D();
 
 		planets[i].parent.rotation.z = (planets[i].tilt) * Math.PI / 180; // rotate parent and add mesh to parent
-		planets[i].parent.add(planets[i].mesh);
+		planets[i].parent.add(planets[i].mesh);	// done to avoid problems with texture mapping and rotation
 		
 		
 
@@ -166,6 +187,9 @@ function createPlanetMeshes() {
 	}
 }
 
+/*
+	Creates all meshes for rings around Saturn and Uranus.
+*/
 function createRingMeshes() {
 
 	var sTexture = THREE.ImageUtils.loadTexture('img/saturnrings.png', {}, function() {
@@ -187,6 +211,11 @@ function createRingMeshes() {
 
 }
 
+/*
+	Creates a mesh for the Sun and initializes 
+	the main light source as well as ambient
+	background light.
+*/
 function createSunMesh() {
 
 	var texture, material;
@@ -218,18 +247,22 @@ function createSunMesh() {
 
 }
 
-//ROTATE & ORBIT PLANETS
+/*
+	Updates all planets, orbiting
+	them around the sun.
+*/
 function updatePlanets( toMove ) {
 	for(var i=0; i<planets.length; i++) {
 		planets[i].update( toMove );
 	}
 }
 
-function getDuration( destination ) {
-	return 3000;
-}
 
-//PICK OBJECTS
+/*
+	Casts a Ray and checks for intersections
+	with meshes on mouse click. Used for determing
+	if user has clicked on a planet.
+*/
 var target = null;
 var ray = new THREE.Raycaster();
 var projector = new THREE.Projector();
@@ -257,9 +290,7 @@ function checkClick() {
 
 		$("#infocontainer").hide(500);
 
-		var duration = getDuration(DEFAULT_CAMERA_POS);
-
-		tweenTo(DEFAULT_CAMERA_POS, duration, DEFAULT_TARGET);
+		tweenTo(DEFAULT_CAMERA_POS, TWEEN_DURATION, DEFAULT_TARGET);
 		return;
 	}
 	
@@ -301,7 +332,11 @@ function checkClick() {
 	}
 }
 
-//ZOOM IN ON CLICKED PLANET & TWEEN CAMERA TARGET
+/*
+	Moves camera smoothly from current location to 
+	destination. Called when clicking on or away from
+	a Planet.
+*/
 function tweenTo( destination, duration, lookAt) {
 	camera.fov = VIEW_ANGLE;
 
@@ -326,8 +361,6 @@ function tweenTo( destination, duration, lookAt) {
 
 
         	if(!(areEqual(destination, DEFAULT_CAMERA_POS))) {
-        		// console.log(camera.position.x+", "+camera.position.y+" "+camera.position.z);
-        		// console.log(DEFAULT_CAMERA_POS.x+", "+DEFAULT_CAMERA_POS.y+", "+DEFAULT_CAMERA_POS.z);
         		$("#infocontainer").show(500);
         	}
         		
@@ -346,6 +379,10 @@ function tweenTo( destination, duration, lookAt) {
 	
 }
 
+/*
+	Updates all text in info box with information
+	about the specified Planet.
+*/
 function updateInfoBox(planet) {
 	var name = planet.name;
 
@@ -369,7 +406,11 @@ function updateInfoBox(planet) {
 	$('#aphelion .info').text(aphelion + " x 10^" + DISTANCE_ORDER + " km");
 }
 
-
+/*
+	Functions for OrbitControls. Allows user to zoom
+	in and out of the scene as well as pan camera on
+	click.
+*/
 function onMouseWheel(event) {
 	if (event.wheelDeltaY) { // WebKit
 		camera.fov -= event.wheelDeltaY * 0.05;
@@ -387,7 +428,11 @@ document.addEventListener('mousewheel', onMouseWheel, false);
 document.addEventListener('DOMMouseScroll', onMouseWheel, false);
 
 
-//RENDER SCENE
+/*
+	Main render loop. Contains calls to updatePlanets
+	and checks for user clicks, as well as points
+	camera in the direction of the cameraTarget.
+*/
 function render() {
 	requestAnimationFrame( render );
 
@@ -423,14 +468,15 @@ function render() {
 	renderer.clear();
 	renderer.render( scene, camera );
 
-	//console.log(target);
 
 	TWEEN.update();
-	//controls.update();
 
 
 }
 
+/*
+	Returns size of current viewport.
+*/
 function getViewportSize() {
     if(typeof(window.innerWidth) == 'number'){
         my_width = window.innerWidth;
@@ -445,14 +491,21 @@ function getViewportSize() {
     return {width: my_width, height: my_height};
 }
 
+/*
+	Capitalizes the specified string.
+*/
 function capitalize(string) {
 	return string.charAt(0).toUpperCase() + string.substring(1);
 }
 
+/*
+	Determines if two vectors have equal components.
+*/
 function areEqual( vector1, vector2 ) {
 	return vector1.x === vector2.x && vector1.y === vector2.y && vector1.z === vector2.z;
 }
 
+// begins the render loop
 render();
 
 

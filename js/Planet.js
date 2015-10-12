@@ -1,4 +1,7 @@
-//PLANET OBJECT
+/*
+	Creates a Planet object with constants
+	based on the specified planet name.
+*/
 function Planet(name) {
 	this.name = name.toUpperCase();
 
@@ -28,19 +31,33 @@ function Planet(name) {
 	this.lastUpdated = Date.now();
 }
 
+/*
+	Returns length of the semeimajor axis of this
+	planet's orbit.
+*/
 Planet.prototype.getSemimajor = function() {
 	return (this.perihelion + this.aphelion) / 2;
 };
 
+/*
+	Returns the time length of this planet's year with
+	the current orbit.
+*/
 Planet.prototype.getYearPeriod = function() {
 	return 2*Math.PI * Math.sqrt(Math.pow(this.getSemimajor(), 3) / (G * PlanetInfo.getSunMass()/Math.pow(10, 9))); // divide by 10^9 to convert m^3 to km^3
 };
 
-
+/*
+	Returns the current radius of this planet's orbit.
+*/
 Planet.prototype.getR = function() {
 	return (this.getSemimajor()*(1 - Math.pow(this.eccentricity, 2)))/(1+this.eccentricity*Math.cos(this.angle));
 };
 
+/*
+	Returns a point where the camera can adequately
+	view the planet.
+*/
 Planet.prototype.getViewpoint = function() {
 	var x = this.X;
 	var y = 1.1 * this.radius;
@@ -49,6 +66,10 @@ Planet.prototype.getViewpoint = function() {
 	return new THREE.Vector3(x, y, z);
 };
 
+/*
+	Updates attributes of this planet. Orbits and 
+	rotates planet.
+*/
 Planet.prototype.update = function( toMove ) {
 	var now = Date.now();
 	var delta = (now - this.lastUpdated) / 1000.0;
@@ -56,7 +77,7 @@ Planet.prototype.update = function( toMove ) {
 	var r = this.getR();
 
 
-	if(toMove && update) { //update variable found in script.js, manipulated by play/pause
+	if(toMove && update) { // the update variable is found in script.js, manipulated by play/pause
 		this.X = r * Math.cos(this.angle);
 		this.Z = r * Math.sin(this.angle);
 
