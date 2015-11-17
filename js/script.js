@@ -324,8 +324,7 @@ function checkClick() {
 	    		
 	    		var viewpoint = p.getViewpoint();
 
-	    		var duration = getDuration(viewpoint);
-	    		tweenTo(viewpoint, duration, p.parent.position);
+	    		tweenTo(viewpoint, TWEEN_DURATION, p.parent.position);
 	    	}
 	    }
 	    
