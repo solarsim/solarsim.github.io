@@ -4,7 +4,7 @@ body {
 	height: 100%;
 	padding: 0;
 	overflow: hidden;
-	font-family: 'Anonymous Pro' !important;
+	font-family: 'Anonymous Pro', "Lucida Console", Monaco, monospace !important;
 }
 
 /* Title */
